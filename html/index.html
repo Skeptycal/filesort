@@ -7,9 +7,18 @@
     <link rel="stylesheet" href="./../css/font-awesome.min.css">
     <link rel="stylesheet" href="./../css/styles.css">
     <script src="./../renderer/renderer.js"></script> <!--Adds script to the DOM-->
+    <script>
+        (function (){
+            sortFiles('/');
+        })();
+    </script>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <h1>Hello World</h1>
+        </div>
+    </div>
     <script>
         require('./../renderer/renderer');
     </script>
