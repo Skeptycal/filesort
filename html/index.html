@@ -7,17 +7,32 @@
     <link rel="stylesheet" href="./../css/font-awesome.min.css">
     <link rel="stylesheet" href="./../css/styles.css">
     <script src="./../renderer/renderer.js"></script> <!--Adds script to the DOM-->
-    <script>
+    <!-- <script>
         (function (){
-            sortFiles('//Users/William/Documents/SourceTree/filesort/downloads/');
+            sortFiles('/Users/William/Documents/SourceTree/filesort/downloads/');
         })();
-    </script>
+    </script> -->
 </head>
 <body>
     <div class="container-fluid">
+        <h1>FileSort</h1>
+        <p><i>Get your files sorted.<i></p>
         <div class="row">
-            <h1>Hello World</h1>
+            <h2 class>
+                <div id="desktop-button" class="col-md-12" ondblclick="sortFiles('/Users/William/Desktop/');"><i class="fa fa-desktop" aria-hidden="true"></i> Desktop</div>
+            </h2>
         </div>
+        <div class="row">
+            <h2>
+                <div id="documents-button" class="col-md-12 centered" ondblclick="sortFiles('/Users/William/Documents/');"><i class="fa fa-file" aria-hidden="true"></i> Documents</div>
+            </h2>
+        </div>
+        <div class="row">
+            <h2>
+                <div id="downloads-button" class="col-md-12" ondblclick="sortFiles('/Users/William/Downloads/');"><i class="fa fa-download" aria-hidden="true"></i> Downloads</div>
+            </h2>
+        </div>
+        <!-- Add empty row to enter in a file path or open the folder dialog box here -->
     </div>
     <script>
         require('./../renderer/renderer');

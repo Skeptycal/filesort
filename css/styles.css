@@ -1,0 +1,36 @@
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+.row {
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    border: 1px solid;
+    border-left: 0;
+    border-right: 0;
+    display: block;
+    cursor: default;
+}
+
+.row + .row {
+    border-top: 0;
+}
+
+#desktop-button:hover {
+    color: #43f945;
+}
+
+#documents-button:hover {
+    color: #f97b7b;
+    display: block;
+}
+
+#downloads-button:hover {
+    color: #de72ff;
+    display: block;
+}
