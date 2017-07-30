@@ -11,6 +11,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "fs-jetpack": "^1.1.0",
+    "lodash.includes": "^4.3.0",
     "parse-torrent-file": "^4.0.3"
   }
 }

@@ -1,6 +1,7 @@
 const jetpack = require('fs-jetpack');
 const parseTorrentFile = require('parse-torrent-file');
 const fs = require('fs');
+const array = require('lodash.includes');
 
 //file extensions
 const bookExt = ["*.epub", "*.mobi"];
@@ -13,6 +14,13 @@ const torrentExt = ["*.torrent"];
 const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg"];
 const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage"];
 
+//files and extensions to ignore
+const ignoreList = [".DS_Store"]
+
+/**
+ * Sorts and classifies files starting at the given root directory
+ * @param  {string} path path to the root directory to begin sorting
+ */
 function sortFiles(path) {
     const jetMaster = jetpack.cwd(path);
     console.log(`Master folder: ${jetMaster.cwd()}`);
@@ -80,12 +88,21 @@ function sortFiles(path) {
         }
 
         //find all remaining directories
+        // let folders = jetMaster.find('.', {files: false, directories: true});
+        let folders = jetMaster.list();
+        console.log(folders);
 
     }
 
     console.log("sorted");
 }
 
+/**
+ * Move files to the correct _TYPE folder
+ * @param  {list} files                     list of files you want to move
+ * @param  {string} typeFolder              _TYPE folder name
+ * @param  {fs-jetpack} jetPath             fs-jetpack object at the current directory
+ */
 function moveFiles(files, typeFolder, jetPath) {
     // console.log(files);
     for(let file of files) {
@@ -111,7 +128,32 @@ function moveFiles(files, typeFolder, jetPath) {
         console.log(`Moving from ${jetPath.cwd()}/${file} to ${jetPath.cwd()}/${typeFolder}/${file}`);
         jetPath.dir(`${typeFolder}`);
         jetPath.move(`${jetPath.cwd()}/${file}`, `${jetPath.cwd()}/${typeFolder}/${file}`);
-
     }
-    // console.log(`Moved files to ${typeFolder}.`);
+}
+
+function moveFolders(folders, jetPath) {
+    let typeFolders = ['_Books', "_Documents","_Images", "_Music", "_Programs", "_Scripts", "_Torrents", "_Videos", "_Zipped"];
+
+    //  console.log(folders);
+    for(let folder in folders){
+        //if not _TYPE folder and not ignored
+        if(!(_.includes(typeFolders, folder)) && !(_.includes(ignoreList, folder))) {
+            let bookCount = jetMaster.find('.', {matching: bookExt, recursive: false}).length;
+            let docCount = jetMaster.find('.', {matching: docExt, recursive: false}).length;
+            let imageCount = jetMaster.find('.', {matching: imageExt, recursive: false}).length;
+            let musicCount = jetMaster.find('.', {matching: musicExt, recursive: false}).length;
+            let programCount = jetMaster.find('.', {matching: programExt, recursive: false}).length;
+            let scriptCount = jetMaster.find('.', {matching: scriptExt, recursive: false}).length;
+            let torrentCount = jetMaster.find('.', {matching: torrentExt, recursive: false}).length;
+            let videoCount = jetMaster.find('.', {matching: videoExt, recursive: false}).length;
+            let zippedCount = jetMaster.find('.', {matching: zippedExt, recursive: false}).length;
+
+            let maxType = -100;
+            if (bookCount/folders.length > 0.5){
+                if(bookCount>maxType) {
+                    console.log("Get Rekt");
+                }
+            }
+        }
+    }
 }
