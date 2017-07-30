@@ -9,6 +9,7 @@
   "author": "William Grant",
   "license": "MIT",
   "dependencies": {
-    "fs-jetpack": "^1.1.0"
+    "fs-jetpack": "^1.1.0",
+    "parse-torrent-file": "^4.0.3"
   }
 }

@@ -1,4 +1,5 @@
 const jetpack = require('fs-jetpack');
+const parseTorrentFile = require('parse-torrent-file');
 
 //file extensions
 const bookExt = ["*.epub", "*.mobi"];
