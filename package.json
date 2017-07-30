@@ -1,0 +1,14 @@
+{
+  "name": "filesort",
+  "version": "0.0.0",
+  "description": "Get your files sorted.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "William Grant",
+  "license": "MIT",
+  "dependencies": {
+    "fs-jetpack": "^1.1.0"
+  }
+}
