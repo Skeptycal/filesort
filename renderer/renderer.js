@@ -1,7 +1,7 @@
 const jetpack = require('fs-jetpack');
 const parseTorrentFile = require('parse-torrent-file');
 const fs = require('fs');
-const array = require('lodash.includes');
+const includes = require('lodash.includes');
 
 //file extensions
 const bookExt = ["*.epub", "*.mobi"];
@@ -87,10 +87,13 @@ function sortFiles(path) {
             moveFiles(zippedFiles, `_Zipped`, jetMaster);
         }
 
+        console.log(`Moved Files`);
+
         //find all remaining directories
         // let folders = jetMaster.find('.', {files: false, directories: true});
         let folders = jetMaster.list();
-        console.log(folders);
+        moveFolders(folders, jetMaster);
+        console.log(`Moved Folders`);
 
     }
 
@@ -117,7 +120,7 @@ function moveFiles(files, typeFolder, jetPath) {
             }
             //check existence
             if(jetPath.exists(parsed.name)!=false) {
-                console.log(`Moving from ${jetPath.cwd()}/${parsed.name} to ${jetPath.cwd()}/${typeFolder}/${parsed.name}`);
+                console.log(`Moving torrent data ${jetPath.cwd()}/${parsed.name} to ${jetPath.cwd()}/${typeFolder}/${parsed.name}`);
                 jetPath.dir(`${typeFolder}`);
                 jetPath.move(`${jetPath.cwd()}/${parsed.name}`, `${jetPath.cwd()}/${typeFolder}/${parsed.name}`);
             } else {
@@ -125,7 +128,7 @@ function moveFiles(files, typeFolder, jetPath) {
             }
         }
 
-        console.log(`Moving from ${jetPath.cwd()}/${file} to ${jetPath.cwd()}/${typeFolder}/${file}`);
+        console.log(`Moving file ${jetPath.cwd()}/${file} to ${jetPath.cwd()}/${typeFolder}/${file}`);
         jetPath.dir(`${typeFolder}`);
         jetPath.move(`${jetPath.cwd()}/${file}`, `${jetPath.cwd()}/${typeFolder}/${file}`);
     }
@@ -133,27 +136,87 @@ function moveFiles(files, typeFolder, jetPath) {
 
 function moveFolders(folders, jetPath) {
     let typeFolders = ['_Books', "_Documents","_Images", "_Music", "_Programs", "_Scripts", "_Torrents", "_Videos", "_Zipped"];
-
-    //  console.log(folders);
-    for(let folder in folders){
+    // console.log(folders);
+    for(var i=0; i<folders.length; i++){
+    	if(jetPath.exists(folders[i])=="dir") { //if it is actually a directory
         //if not _TYPE folder and not ignored
-        if(!(_.includes(typeFolders, folder)) && !(_.includes(ignoreList, folder))) {
-            let bookCount = jetMaster.find('.', {matching: bookExt, recursive: false}).length;
-            let docCount = jetMaster.find('.', {matching: docExt, recursive: false}).length;
-            let imageCount = jetMaster.find('.', {matching: imageExt, recursive: false}).length;
-            let musicCount = jetMaster.find('.', {matching: musicExt, recursive: false}).length;
-            let programCount = jetMaster.find('.', {matching: programExt, recursive: false}).length;
-            let scriptCount = jetMaster.find('.', {matching: scriptExt, recursive: false}).length;
-            let torrentCount = jetMaster.find('.', {matching: torrentExt, recursive: false}).length;
-            let videoCount = jetMaster.find('.', {matching: videoExt, recursive: false}).length;
-            let zippedCount = jetMaster.find('.', {matching: zippedExt, recursive: false}).length;
-
-            let maxType = -100;
-            if (bookCount/folders.length > 0.5){
-                if(bookCount>maxType) {
-                    console.log("Get Rekt");
+            let jetFolder = jetPath.cwd(`${jetPath.cwd()}/${folders[i]}`) //used for finding items in the folder itself
+            let maxFiles = 0;
+            let folderType = "";
+            if(!(includes(typeFolders, folders[i])) && !(includes(ignoreList, folders[i]))) {
+                // console.log(`Folder found: ${folders[i]}`);
+                let bookCount = jetFolder.find('.', {matching: bookExt, recursive: false}).length;
+                let newMax = checkMaxFiles(bookCount, maxFiles);
+                if(newMax) {
+                    maxFiles = bookCount;
+                    folderType = typeFolders[0];
+                }
+                let docCount = jetFolder.find('.', {matching: docExt, recursive: false}).length;
+                newMax = checkMaxFiles(docCount, maxFiles);
+                if(newMax) {
+                    maxFiles = docCount;
+                    folderType = typeFolders[1];
+                }
+                let imageCount = jetFolder.find('.', {matching: imageExt, recursive: false}).length;
+                newMax = checkMaxFiles(imageCount, maxFiles);
+                if(newMax) {
+                    maxFiles = imageCount;
+                    folderType = typeFolders[2];
+                }
+                let musicCount = jetFolder.find('.', {matching: musicExt, recursive: false}).length;
+                newMax = checkMaxFiles(musicCount, maxFiles);
+                if(newMax) {
+                    maxFiles = musicCount;
+                    folderType = typeFolders[3];
+                }
+                let programCount = jetFolder.find('.', {matching: programExt, recursive: false}).length;
+                newMax = checkMaxFiles(programCount, maxFiles);
+                if(newMax) {
+                    maxFiles = programCount;
+                    folderType = typeFolders[4];
+                }
+                let scriptCount = jetFolder.find('.', {matching: scriptExt, recursive: false}).length;
+                newMax = checkMaxFiles(scriptCount, maxFiles);
+                if(newMax) {
+                    maxFiles = scriptCount;
+                    folderType = typeFolders[5];
+                }
+                let torrentCount = jetFolder.find('.', {matching: torrentExt, recursive: false}).length;
+                newMax = checkMaxFiles(torrentCount, maxFiles);
+                if(newMax) {
+                    maxFiles = torrentCount;
+                    folderType = typeFolders[6];
+                }
+                let videoCount = jetFolder.find('.', {matching: videoExt, recursive: false}).length;
+                newMax = checkMaxFiles(videoCount, maxFiles);
+                if(newMax) {
+                    maxFiles = videoCount;
+                    folderType = typeFolders[7];
+                }
+                let zippedCount = jetFolder.find('.', {matching: zippedExt, recursive: false}).length;
+                newMax = checkMaxFiles(zippedCount, maxFiles);
+                if(newMax) {
+                    maxFiles = zippedCount;
+                    folderType = typeFolders[8];
+                }
+                //check if folder type isn't empty then move directory to _TYPE folder
+                if(folderType != "") {
+                    console.log(`Moving folder ${jetPath.cwd()}/${folders[i]} to ${jetPath.cwd()}/${folderType}/${folders[i]}`);
+                    jetPath.dir(`${folderType}`);
+                    jetPath.move(`${jetPath.cwd()}/${folders[i]}`, `${jetPath.cwd()}/${folderType}/${folders[i]}`);
+                } else {
+                    //bring up dialog to choose where to put the folder
+                    console.log(`Cannot classify: ${folders[i]}`);
                 }
             }
         }
+    }
+}
+
+function checkMaxFiles(fileCount, maxFiles) {
+    if(fileCount > maxFiles){
+        return true;
+    } else {
+        return false;
     }
 }
