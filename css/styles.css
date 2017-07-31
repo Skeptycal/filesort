@@ -28,15 +28,16 @@ p {
 }
 
 #desktop-button:hover {
-    color: #43f945;
-}
-
-#documents-button:hover {
     color: #f97b7b;
     display: block;
 }
 
 #downloads-button:hover {
     color: #de72ff;
+    display: block;
+}
+
+#choose-button:hover {
+    color: #5ddaff;
     display: block;
 }
