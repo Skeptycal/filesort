@@ -3,6 +3,9 @@ const parseTorrentFile = require('parse-torrent-file');
 const fs = require('fs');
 const includes = require('lodash.includes');
 
+ const ipc = require('electron').ipcRenderer
+ const chooseFolderBtn = document.getElementById('choose-button')
+
 //file extensions
 const bookExt = ["*.epub", "*.mobi"];
 const docExt = ["*.pdf", "*.txt", "*.doc", "*.docx", "*.dotx","*.ppt", "*.pptx", "*.md", "*.json", "*.ods", "*.log", "*.xls", "*.xlsx"];
@@ -17,6 +20,16 @@ const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.uni
 
 //files and extensions to ignore
 const ignoreList = [".DS_Store"]
+
+if (chooseFolderBtn){
+    chooseFolderBtn.addEventListener('click', function (event) {
+        ipc.send('open-file-dialog');
+    })
+}
+
+ipc.on('selected-directory', function (event, path) {
+    sortFiles(`${path}`);
+})
 
 /**
  * Sorts and classifies files starting at the given root directory
