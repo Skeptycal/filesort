@@ -12,6 +12,7 @@ const programExt = ["*.dmg", "*.exe", "*.sh", "*.app", "*.pkg", "*.apk", "*.ipa"
 const scriptExt = ["*.py", "*.java", "*.class", "*.sh"];
 const torrentExt = ["*.torrent"];
 const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg"];
+const webExt = ["*.html", "*.css", "*.js", "*.htm"];
 const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage"];
 
 //files and extensions to ignore
@@ -81,23 +82,25 @@ function sortFiles(path) {
             moveFiles(videoFiles, `_Videos`, jetMaster);
         }
 
+        // _Web
+        let webFiles = jetMaster.find('.', {matching: webExt, recursive: false});
+        if (webFiles.length > 0){
+            moveFiles(webFiles, `_Web`, jetMaster);
+        }
+
         // _Zipped
         let zippedFiles = jetMaster.find('.', {matching: zippedExt, recursive: false});
         if (zippedFiles.length > 0){
             moveFiles(zippedFiles, `_Zipped`, jetMaster);
         }
 
-        console.log(`Moved Files`);
-
         //find all remaining directories
         // let folders = jetMaster.find('.', {files: false, directories: true});
         let folders = jetMaster.list();
         moveFolders(folders, jetMaster);
-        console.log(`Moved Folders`);
-
     }
 
-    console.log("sorted");
+    console.log("sorted!");
 }
 
 /**
@@ -125,6 +128,20 @@ function moveFiles(files, typeFolder, jetPath) {
                 jetPath.move(`${jetPath.cwd()}/${parsed.name}`, `${jetPath.cwd()}/${typeFolder}/${parsed.name}`);
             } else {
                 console.log("WARNING: Torrent files are missing.");
+            }
+        } else if (typeFolder == `_Web`) {
+            // console.log(`Web file found: ${file}`);
+             //check for .htm and .html files
+            let webFiles = findWebFiles(file);
+
+            if(webFiles != "") {
+                if(jetPath.exists(webFiles)!=false) {
+                    console.log(`Moving web page data ${jetPath.cwd()}/${webFiles} to ${jetPath.cwd()}/${typeFolder}/${webFiles}`);
+                    jetPath.dir(`${typeFolder}`);
+                    jetPath.move(`${jetPath.cwd()}/${webFiles}`, `${jetPath.cwd()}/${typeFolder}/${webFiles}`);
+                }  else {
+                    console.log("WARNING: Web files are missing.");
+                }
             }
         }
 
@@ -219,4 +236,22 @@ function checkMaxFiles(fileCount, maxFiles) {
     } else {
         return false;
     }
+}
+
+function findWebFiles(file){
+    let output = "";
+    let extCheck = includes(file, ".html");
+    let extIndex = file.indexOf(".html");
+    if(!extCheck){
+        extCheck = includes(file, ".htm");
+        extIndex = file.indexOf(".htm");
+    }
+
+    // console.log(`extCheck: ${extCheck}`);
+    // console.log(`extIndex: ${extIndex}`);
+    if(extIndex != -1){
+        output = `${file.substr(0, extIndex)}_files`;
+    }
+
+    return output;
 }

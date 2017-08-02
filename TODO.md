@@ -13,3 +13,4 @@
     - Use favicons for folder types and when you hover over them it will show the name of the folder
 - Clean up menu bar
 - Make main window have a loading display and then show "Done" before fading back to the original display. (React component spinning wheel)
+~- Add _Web support with treating .htm files like .torrent files~
