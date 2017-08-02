@@ -2,6 +2,7 @@ body {
      /*dark theme*/
     /*background-color: #555666;
     color: white;*/
+    -webkit-app-region: drag;
 }
 
 h1 {
@@ -30,14 +31,17 @@ p {
 #desktop-button:hover {
     color: #f97b7b;
     display: block;
+    -webkit-app-region: no-drag;
 }
 
 #downloads-button:hover {
     color: #de72ff;
     display: block;
+    -webkit-app-region: no-drag;
 }
 
 #choose-button:hover {
     color: #5ddaff;
     display: block;
+    -webkit-app-region: no-drag;
 }

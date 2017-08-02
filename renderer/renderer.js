@@ -6,6 +6,11 @@ const includes = require('lodash.includes');
  const ipc = require('electron').ipcRenderer
  const chooseFolderBtn = document.getElementById('choose-button')
 
+ const sortedNotification = {
+     title: 'FileSort',
+     body: "Your files are sorted!"
+ }
+
 //file extensions
 const bookExt = ["*.epub", "*.mobi"];
 const docExt = ["*.pdf", "*.txt", "*.doc", "*.docx", "*.dotx","*.ppt", "*.pptx", "*.md", "*.json", "*.ods", "*.log", "*.xls", "*.xlsx"];
@@ -16,10 +21,10 @@ const scriptExt = ["*.py", "*.java", "*.class", "*.sh"];
 const torrentExt = ["*.torrent"];
 const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg"];
 const webExt = ["*.html", "*.css", "*.js", "*.htm"];
-const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage"];
+const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage", "*.prefab"];
 
 //files and extensions to ignore
-const ignoreList = [".DS_Store"]
+const ignoreList = [".DS_Store", "Incomplete"]
 
 if (chooseFolderBtn){
     chooseFolderBtn.addEventListener('click', function (event) {
@@ -111,6 +116,9 @@ function sortFiles(path) {
         // let folders = jetMaster.find('.', {files: false, directories: true});
         let folders = jetMaster.list();
         moveFolders(folders, jetMaster);
+
+        //finished sorting files
+        const sortNotification = new window.Notification(sortedNotification.title, sortedNotification);
     }
 
     console.log("sorted!");
@@ -125,6 +133,13 @@ function sortFiles(path) {
 function moveFiles(files, typeFolder, jetPath) {
     // console.log(files);
     for(let file of files) {
+        //meta files
+        if(jetPath.exists(`${file}.meta`)!=false) {
+            console.log(`Moving meta file ${jetPath.cwd()}/${file}.meta to ${jetPath.cwd()}/${typeFolder}/${file}.meta`);
+            jetPath.dir(`${typeFolder}`);
+            jetPath.move(`${jetPath.cwd()}/${file}.meta`, `${jetPath.cwd()}/${typeFolder}/${file}.meta`);
+        }
+
         if(typeFolder === `_Torrents`) {
             var torrent = fs.readFileSync(jetPath.cwd()+'/'+file);
             var parsed;
@@ -169,7 +184,7 @@ function moveFolders(folders, jetPath) {
     // console.log(folders);
     for(var i=0; i<folders.length; i++){
     	if(jetPath.exists(folders[i])=="dir") { //if it is actually a directory
-        //if not _TYPE folder and not ignored
+            //if not _TYPE folder and not ignored
             let jetFolder = jetPath.cwd(`${jetPath.cwd()}/${folders[i]}`) //used for finding items in the folder itself
             let maxFiles = 0;
             let folderType = "";
@@ -234,6 +249,13 @@ function moveFolders(folders, jetPath) {
                     console.log(`Moving folder ${jetPath.cwd()}/${folders[i]} to ${jetPath.cwd()}/${folderType}/${folders[i]}`);
                     jetPath.dir(`${folderType}`);
                     jetPath.move(`${jetPath.cwd()}/${folders[i]}`, `${jetPath.cwd()}/${folderType}/${folders[i]}`);
+
+                    //meta files
+                    if(jetPath.exists(`${folders[i]}.meta`)!=false) {
+                        console.log(`Moving meta file ${jetPath.cwd()}/${folders[i]}.meta to ${jetPath.cwd()}/${folderType}/${folders[i]}.meta`);
+                        jetPath.dir(`${folderType}`);
+                        jetPath.move(`${jetPath.cwd()}/${folders[i]}.meta`, `${jetPath.cwd()}/${folderType}/${folders[i]}.meta`);
+                    }
                 } else {
                     //bring up dialog to choose where to put the folder
                     console.log(`Cannot classify: ${folders[i]}`);
