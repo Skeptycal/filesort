@@ -1,7 +1,14 @@
+/*
+TODO Not classifying Itunes Play Patch.app
+ */
+
 const jetpack = require('fs-jetpack');
 const parseTorrentFile = require('parse-torrent-file');
 const fs = require('fs');
+
+//lodash utilities
 const includes = require('lodash.includes');
+const toUpper = require('lodash.toUpper');
 
  const ipc = require('electron').ipcRenderer
  const chooseFolderBtn = document.getElementById('choose-button')
@@ -11,17 +18,21 @@ const includes = require('lodash.includes');
      body: "Your files are sorted!"
  }
 
+ //used for choose folder dialog
+const BrowserWindow = require('electron').remote.BrowserWindow;
+const path = require('path');
+
 //file extensions
 const bookExt = ["*.epub", "*.mobi"];
 const docExt = ["*.pdf", "*.txt", "*.doc", "*.docx", "*.dotx","*.ppt", "*.pptx", "*.md", "*.json", "*.ods", "*.log", "*.xls", "*.xlsx"];
-const imageExt = ["*.png", "*.jpg", "*.jpeg", "*.gif", "*.xcf", "*.stl", "*.blend"];
-const musicExt = ["*.mp3", "*.wav", "*.flac", "*.m4a", "*.ogg", "*.mid", "*.asd", "*.m3u", "*.pls", "*.alp", "*.asx", "*.bfxrsound"];
+const imageExt = ["*.png", "*.jpg", "*.jpeg", "*.gif", "*.xcf", "*.stl", "*.blend", "*.obj", "*.mtl", "*.3ds", "*.tga", "*.icns"];
+const musicExt = ["*.mp3", "*.wav", "*.flac", "*.m4a", "*.ogg", "*.mid", "*.asd", "*.m3u", "*.pls", "*.alp", "*.asx", "*.bfxrsound", "*.m3u8", "*.als"];
 const programExt = ["*.dmg", "*.exe", "*.sh", "*.app", "*.pkg", "*.apk", "*.ipa"];
-const scriptExt = ["*.py", "*.java", "*.class", "*.sh"];
+const scriptExt = ["*.py", "*.java", "*.class", "*.sh", "*.cs", "*.r"];
 const torrentExt = ["*.torrent"];
-const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg"];
+const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg", "*.webm"];
 const webExt = ["*.html", "*.css", "*.js", "*.htm"];
-const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage", "*.prefab"];
+const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage", "*.prefab", "*.fbx"];
 
 //files and extensions to ignore
 const ignoreList = [".DS_Store", "Incomplete"]
@@ -35,6 +46,15 @@ if (chooseFolderBtn){
 ipc.on('selected-directory', function (event, path) {
     sortFiles(`${path}`);
 })
+// TODO
+function processFiles(jetMaster, fileType, sortFolder) {
+    let files = jetMaster.find('.', {matching: fileType, recursive: false});
+    let fileTypeUpper = fileType.map(function(x){ return toUpper(x) });
+    files.push.apply(files, jetMaster.find('.', {matching: fileTypeUpper, recursive: false}));
+    if (files.length > 0){
+        moveFiles(files, sortFolder, jetMaster);
+    }
+}
 
 /**
  * Sorts and classifies files starting at the given root directory
@@ -55,62 +75,34 @@ function sortFiles(path) {
         // run through each type of file
 
         // _Books
-        let bookFiles = jetMaster.find('.', {matching: bookExt, recursive: false});
-        if (bookFiles.length > 0){
-            moveFiles(bookFiles, `_Books`, jetMaster);
-        }
+        processFiles(jetMaster, bookExt, `_Books`);
 
         // _Documents
-        let docFiles = jetMaster.find('.', {matching: docExt, recursive: false});
-        if (docFiles.length > 0){
-            moveFiles(docFiles, `_Documents`, jetMaster);
-        }
+        processFiles(jetMaster, docExt, `_Documents`);
+
         // _Images
-        let imageFiles = jetMaster.find('.', {matching: imageExt, recursive: false});
-        if (imageFiles.length > 0){
-            moveFiles(imageFiles, `_Images`, jetMaster);
-        }
+        processFiles(jetMaster, imageExt, `_Images`);
+
         // _Music
-        let musicFiles = jetMaster.find('.', {matching: musicExt, recursive: false});
-        if (musicFiles.length > 0){
-            moveFiles(musicFiles, `_Music`, jetMaster);
-        }
+        processFiles(jetMaster, musicExt, `_Music`);
 
         // _Programs
-        let programFiles = jetMaster.find('.', {matching: programExt, recursive: false});
-        if (programFiles.length > 0){
-            moveFiles(programFiles, `_Programs`, jetMaster);
-        }
+        processFiles(jetMaster, programExt, `_Programs`);
 
         // _Scripts
-        let scriptFiles = jetMaster.find('.', {matching: scriptExt, recursive: false});
-        if (scriptFiles.length > 0){
-            moveFiles(scriptFiles, `_Scripts`, jetMaster);
-        }
+        processFiles(jetMaster, scriptExt, `_Scripts`);
 
         // _Torrents
-        let torrentFiles = jetMaster.find('.', {matching: torrentExt, recursive: false});
-        if (torrentFiles.length > 0){
-            moveFiles(torrentFiles, `_Torrents`, jetMaster);
-        }
+        processFiles(jetMaster, torrentExt, `_Torrents`);
 
         // _Videos
-        let videoFiles = jetMaster.find('.', {matching: videoExt, recursive: false});
-        if (videoFiles.length > 0){
-            moveFiles(videoFiles, `_Videos`, jetMaster);
-        }
+        processFiles(jetMaster, videoExt, `_Videos`);
 
         // _Web
-        let webFiles = jetMaster.find('.', {matching: webExt, recursive: false});
-        if (webFiles.length > 0){
-            moveFiles(webFiles, `_Web`, jetMaster);
-        }
+        processFiles(jetMaster, webExt, `_Web`);
 
         // _Zipped
-        let zippedFiles = jetMaster.find('.', {matching: zippedExt, recursive: false});
-        if (zippedFiles.length > 0){
-            moveFiles(zippedFiles, `_Zipped`, jetMaster);
-        }
+        processFiles(jetMaster, zippedExt, `_Zipped`);
 
         //find all remaining directories
         // let folders = jetMaster.find('.', {files: false, directories: true});
@@ -259,6 +251,11 @@ function moveFolders(folders, jetPath) {
                 } else {
                     //bring up dialog to choose where to put the folder
                     console.log(`Cannot classify: ${folders[i]}`);
+                    // const modalPath = path.join('file://', __dirname, '../html/choosefolder.html');
+                    // let win = new BrowserWindow({ width: 600, height: 400, frame: false});
+                    // win.on('close', function () { win = null });
+                    // win.loadURL(modalPath);
+                    // win.show();
                 }
             }
         }

@@ -7,6 +7,8 @@ const Menu = electron.Menu
 const ipc = electron.ipcMain
 const dialog = electron.dialog
 
+const globalShortcut = electron.globalShortcut
+
 let template = [{
   label: 'View',
   submenu: [{
@@ -209,6 +211,19 @@ if (process.platform === 'win32') {
 
 app.on('ready', event=>{
     'use strict';
+    //register Global shortcuts - need to import method from renderer.js
+    //Sort Desktop
+    globalShortcut.register('CommandOrControl+Alt+D', function () {
+        // filesort.sortFiles('/Users/William/Desktop/');
+    });
+    //Sort Downloads
+    globalShortcut.register('CommandOrControl+Alt+Shift+D', function () {
+        // filesort.Files('/Users/William/Downloads/');
+    });
+    //Sort Choosen Folder
+    globalShortcut.register('CommandOrControl+Alt+O', function () {
+        // filesort.sortFiles('/Users/William/Documents/SourceTree/filesort/downloads/'); //temp
+    });
     // Menubar loading
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
@@ -226,6 +241,10 @@ app.on('browser-window-created', function () {
 app.on('window-all-closed', function () {
   let reopenMenuItem = findReopenMenuItem()
   if (reopenMenuItem) reopenMenuItem.enabled = true
+})
+
+app.on('will-quit', function () {
+        globalShortcut.unregisterAll();
 })
 
 ipc.on('open-file-dialog', function (event) {
