@@ -17,3 +17,6 @@ node_modules
 
 #fake downloads folder for testing
 downloads
+
+#vscode config
+.vscode

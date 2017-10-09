@@ -1,5 +1,7 @@
 /*
-TODO Not classifying Itunes Play Patch.app
+TODO
+Not classifying Itunes Play Patch.app
+Improve and clean folder classifying logic
  */
 
 const jetpack = require('fs-jetpack');
@@ -30,7 +32,7 @@ const musicExt = ["*.mp3", "*.wav", "*.flac", "*.m4a", "*.ogg", "*.mid", "*.asd"
 const programExt = ["*.dmg", "*.exe", "*.sh", "*.app", "*.pkg", "*.apk", "*.ipa"];
 const scriptExt = ["*.py", "*.java", "*.class", "*.sh", "*.cs", "*.r"];
 const torrentExt = ["*.torrent"];
-const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg", "*.webm"];
+const videoExt = ["*.mkv", "*.mp4", "*.mov", "*.mpeg", "*.webm", "*.srt"];
 const webExt = ["*.html", "*.css", "*.js", "*.htm"];
 const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.unitypackage", "*.prefab", "*.fbx"];
 
@@ -38,7 +40,7 @@ const zippedExt = ["*.zip", "*.rar", "*.7z", "*.tar.gz", "*.tar", "*.gz", "*.uni
 const ignoreList = [".DS_Store", "Incomplete"]
 
 if (chooseFolderBtn){
-    chooseFolderBtn.addEventListener('click', function (event) {
+    chooseFolderBtn.addEventListener('dblclick', function (event) {
         ipc.send('open-file-dialog');
     })
 }
@@ -252,7 +254,7 @@ function moveFolders(folders, jetPath) {
                     //bring up dialog to choose where to put the folder
                     console.log(`Cannot classify: ${folders[i]}`);
                     // const modalPath = path.join('file://', __dirname, '../html/choosefolder.html');
-                    // let win = new BrowserWindow({ width: 600, height: 400, frame: false});
+                    // let win = new BrowserWindow({ width: 600, height: 400, titleBarStyle: 'hiddenInset'});
                     // win.on('close', function () { win = null });
                     // win.loadURL(modalPath);
                     // win.show();

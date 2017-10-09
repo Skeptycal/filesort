@@ -1,5 +1,7 @@
 # FileSort
 
+![Sreenshot](/graphics/SCREENSHOT.png)
+
 *Get your files sorted*
 
 ## Description
@@ -9,16 +11,15 @@ Please use with caution. I have only tested this on macOS.
 Sorts files and folders and puts them into *\_Type* folders for easy access at the top of your directory.
 
 ## Prerequisites
+This project requires you to install [Git](https://git-scm.com/), [Node](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/en/).
 
-
-## Building
-
-
-## Running
-
-
-## Uninstalling
-
+## Development
+```shell
+git clone https://github.com/yougotwill/filesort
+cd filesort
+yarn
+yarn start
+```
 
 ## File Classification
 Files are classified as follows:
@@ -32,11 +33,14 @@ Files are classified as follows:
 | _Programs      | ".dmg", ".exe", ".sh", ".app", ".pkg", ".apk", ".ipa" |
 | _Scripts       | ".py", ".java", ".class", ".sh", "*.cs", "*.r" |
 | _Torrents      | ".torrent"                               |
-| _Videos        | ".mkv", ".mp4", ".mov", ".mpeg", ".webm" |
+| _Videos        | ".mkv", ".mp4", ".mov", ".mpeg", ".webm", ".srt" |
 | _Web           | ".html", ".css", ".js", ".htm"           |
 | _Zipped        | ".zip", ".rar", ".7z", ".tar.gz", ".tar", ".gz", "*.unitypackage", "*.prefab", ".fbx" |
 
-### Ignore List
+## Folder Classification
+Folders are classified based on the most prevalent *_Type* folder found one level down from the directory.
+
+### Ignored Items List
 
 ".DS_Store", "Incomplete"
 
